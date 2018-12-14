@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "1009830851809",
+    "firebase_url": "https://flight-app-mock.firebaseio.com",
+    "project_id": "flight-app-mock",
+    "storage_bucket": "flight-app-mock.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1009830851809:android:8658d2b8af672428",
+        "android_client_info": {
+          "package_name": "com.example.flighttickets"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1009830851809-fson0hcffv5i5tb8l3v1lm82pmen2fei.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBZuG4V8TAgrd32ZU9aTbWlUQnk_3FVlKc"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
