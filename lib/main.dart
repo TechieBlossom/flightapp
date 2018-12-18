@@ -1,20 +1,21 @@
 import 'package:flighttickets/CustomAppBar.dart';
 import 'package:flighttickets/CustomShapeClipper.dart';
+import 'package:flighttickets/flight_list.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 void main() => runApp(MaterialApp(
-  title: 'Flight List Mock Up',
-  debugShowCheckedModeBanner: false,
-  home: HomeScreen(),
-  theme: appTheme,
-));
+      title: 'Flight List Mock Up',
+      debugShowCheckedModeBanner: false,
+      home: HomeScreen(),
+      theme: appTheme,
+    ));
 
 Color firstColor = Color(0xFFF47D15);
 Color secondColor = Color(0xFFEF772C);
 
 ThemeData appTheme =
-ThemeData(primaryColor: Color(0xFFF3791A), fontFamily: 'Oxygen');
+    ThemeData(primaryColor: Color(0xFFF3791A), fontFamily: 'Oxygen');
 
 List<String> locations = ['Boston (BOS)', 'New York City (JFK)'];
 
@@ -22,21 +23,25 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(),
-      body: Column(
-        children: <Widget>[
-          HomeScreenTopPart(),
-          homeScreenBottomPart,
-        ],
+      bottomNavigationBar: CustomAppBar(),
+      body: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: Column(
+          children: <Widget>[
+            HomeScreenTopPart(),
+            homeScreenBottomPart,
+            homeScreenBottomPart
+          ],
+        ),
       ),
     );
   }
 }
 
 const TextStyle dropDownLabelStyle =
-TextStyle(color: Colors.white, fontSize: 16.0);
+    TextStyle(color: Colors.white, fontSize: 16.0);
 const TextStyle dropDownMenuItemStyle =
-TextStyle(color: Colors.black, fontSize: 16.0);
+    TextStyle(color: Colors.black, fontSize: 16.0);
 
 class HomeScreenTopPart extends StatefulWidget {
   @override
@@ -95,22 +100,22 @@ class _HomeScreenTopPartState extends State<HomeScreenTopPart> {
                           ],
                         ),
                         itemBuilder: (BuildContext context) =>
-                        <PopupMenuItem<int>>[
-                          PopupMenuItem(
-                            child: Text(
-                              locations[0],
-                              style: dropDownMenuItemStyle,
-                            ),
-                            value: 0,
-                          ),
-                          PopupMenuItem(
-                            child: Text(
-                              locations[1],
-                              style: dropDownMenuItemStyle,
-                            ),
-                            value: 1,
-                          ),
-                        ],
+                            <PopupMenuItem<int>>[
+                              PopupMenuItem(
+                                child: Text(
+                                  locations[0],
+                                  style: dropDownMenuItemStyle,
+                                ),
+                                value: 0,
+                              ),
+                              PopupMenuItem(
+                                child: Text(
+                                  locations[1],
+                                  style: dropDownMenuItemStyle,
+                                ),
+                                value: 1,
+                              ),
+                            ],
                       ),
                       Spacer(),
                       Icon(
@@ -153,9 +158,18 @@ class _HomeScreenTopPartState extends State<HomeScreenTopPart> {
                           borderRadius: BorderRadius.all(
                             Radius.circular(30.0),
                           ),
-                          child: Icon(
-                            Icons.search,
-                            color: Colors.black,
+                          child: InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          FlightListingScreen()));
+                            },
+                            child: Icon(
+                              Icons.search,
+                              color: Colors.black,
+                            ),
                           ),
                         ),
                         border: InputBorder.none,
@@ -184,7 +198,7 @@ class _HomeScreenTopPartState extends State<HomeScreenTopPart> {
                     ),
                     InkWell(
                       child:
-                      ChoiceChip(Icons.hotel, "Hotels", !isFlightSelected),
+                          ChoiceChip(Icons.hotel, "Hotels", !isFlightSelected),
                       onTap: () {
                         setState(() {
                           isFlightSelected = false;
@@ -220,11 +234,11 @@ class _ChoiceChipState extends State<ChoiceChip> {
       padding: EdgeInsets.symmetric(horizontal: 18.0, vertical: 8.0),
       decoration: widget.isSelected
           ? BoxDecoration(
-        color: Colors.white.withOpacity(0.15),
-        borderRadius: BorderRadius.all(
-          Radius.circular(20.0),
-        ),
-      )
+              color: Colors.white.withOpacity(0.15),
+              borderRadius: BorderRadius.all(
+                Radius.circular(20.0),
+              ),
+            )
           : null,
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -284,12 +298,10 @@ var homeScreenBottomPart = Column(
 );
 
 List<CityCard> cityCards = [
-  CityCard("assets/images/lasvegas.jpg", "Las Vegas", "Feb 2019", "45", 4299,
-      2250),
   CityCard(
-      "assets/images/athens.jpg", "Athens", "Apr 2019", "50", 9999, 4159),
-  CityCard(
-      "assets/images/sydney.jpeg", "Sydney", "Dec 2018", "40", 5999, 2399)
+      "assets/images/lasvegas.jpg", "Las Vegas", "Feb 2019", "45", 4299, 2250),
+  CityCard("assets/images/athens.jpg", "Athens", "Apr 2019", "50", 9999, 4159),
+  CityCard("assets/images/sydney.jpeg", "Sydney", "Dec 2018", "40", 5999, 2399)
 ];
 
 final formatCurrency = NumberFormat.simpleCurrency();
@@ -334,9 +346,9 @@ class CityCard extends StatelessWidget {
                             begin: Alignment.bottomCenter,
                             end: Alignment.topCenter,
                             colors: [
-                              Colors.black, Colors.black.withOpacity(0.1),
-                            ])
-                    ),
+                          Colors.black,
+                          Colors.black.withOpacity(0.1),
+                        ])),
                   ),
                 ),
                 Positioned(
@@ -367,7 +379,8 @@ class CityCard extends StatelessWidget {
                         ],
                       ),
                       Container(
-                        padding: EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.0),
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 6.0, vertical: 2.0),
                         decoration: BoxDecoration(
                           color: Colors.white,
                           shape: BoxShape.rectangle,
@@ -390,10 +403,26 @@ class CityCard extends StatelessWidget {
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
-              SizedBox(width: 5.0,),
-              Text('${formatCurrency.format(newPrice)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 14.0),),
-              SizedBox(width: 5.0,),
-              Text("(${formatCurrency.format(oldPrice)})", style: TextStyle(color: Colors.grey, fontWeight: FontWeight.normal, fontSize: 12.0),),
+              SizedBox(
+                width: 5.0,
+              ),
+              Text(
+                '${formatCurrency.format(newPrice)}',
+                style: TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14.0),
+              ),
+              SizedBox(
+                width: 5.0,
+              ),
+              Text(
+                "(${formatCurrency.format(oldPrice)})",
+                style: TextStyle(
+                    color: Colors.grey,
+                    fontWeight: FontWeight.normal,
+                    fontSize: 12.0),
+              ),
             ],
           )
         ],

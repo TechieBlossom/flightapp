@@ -21,6 +21,8 @@ dependencies:
   cupertino_icons: ^0.1.2
   intl:
   cloud_firestore:
+  cached_network_image:
+  rxdart:
 
 dev_dependencies:
   flutter_test:
