@@ -1,17 +1,18 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flighttickets/CustomShapeClipper.dart';
+import 'package:flighttickets/blocs/app_bloc.dart';
+import 'package:flighttickets/blocs/bloc_provider.dart';
+import 'package:flighttickets/blocs/flight_list_bloc.dart';
 import 'package:flighttickets/main.dart';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 final Color discountBackgroundColor = Color(0xFFFFE08D);
 final Color flightBorderColor = Color(0xFFE6E6E6);
 final Color chipBackgroundColor = Color(0xFFF6F6F6);
 
 class InheritedFlightListing extends InheritedWidget {
-  final String toLocation, fromLocation;
 
-  InheritedFlightListing({this.fromLocation, this.toLocation, Widget child})
-      : super(child: child);
+  InheritedFlightListing({Widget child}) : super(child: child);
 
   @override
   bool updateShouldNotify(InheritedWidget oldWidget) => true;
@@ -23,37 +24,63 @@ class InheritedFlightListing extends InheritedWidget {
 class FlightListingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          "Search Result",
+    return BlocProvider(
+      bloc: FlightListBloc(BlocProvider.of<AppBloc>(context).firebaseService),
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(
+            "Search Result",
+          ),
+          elevation: 0.0,
+          centerTitle: true,
+          leading: InkWell(
+            child: Icon(Icons.arrow_back),
+            onTap: () {
+              Navigator.pop(context);
+            },
+          ),
         ),
-        elevation: 0.0,
-        centerTitle: true,
-        leading: InkWell(
-          child: Icon(Icons.arrow_back),
-          onTap: () {
-            Navigator.pop(context);
-          },
-        ),
-      ),
-      body: SingleChildScrollView(
-        scrollDirection: Axis.vertical,
-        child: Column(
-          children: <Widget>[
-            FlightListTopPart(),
-            SizedBox(
-              height: 20.0,
-            ),
-            FlightListingBottomPart(),
-          ],
+        body: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: Column(
+            children: <Widget>[
+              FlightListTopPart(),
+              SizedBox(
+                height: 20.0,
+              ),
+              FlightListingBottomPart(),
+            ],
+          ),
         ),
       ),
     );
   }
 }
 
-class FlightListingBottomPart extends StatelessWidget {
+class FlightListingBottomPart extends StatefulWidget {
+
+  @override
+  FlightListingBottomPartState createState() {
+    return new FlightListingBottomPartState();
+  }
+}
+
+class FlightListingBottomPartState extends State<FlightListingBottomPart> {
+
+  FlightListBloc flightListBloc;
+
+  @override
+  void initState() {
+    super.initState();
+    flightListBloc = BlocProvider.of<FlightListBloc>(context);
+  }
+
+  @override
+  void dispose() {
+    flightListBloc.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -72,7 +99,7 @@ class FlightListingBottomPart extends StatelessWidget {
             height: 10.0,
           ),
           StreamBuilder(
-            stream: Firestore.instance.collection('deals').snapshots(),
+            stream: flightListBloc.dealsStream,
             builder: (context, snapshot) {
               return !snapshot.hasData
                   ? Center(child: CircularProgressIndicator())
@@ -92,7 +119,8 @@ Widget _buildDealsList(BuildContext context, List<DocumentSnapshot> snapshots) {
       physics: ClampingScrollPhysics(),
       scrollDirection: Axis.vertical,
       itemBuilder: (context, index) {
-        return FlightCard(flightDetails : FlightDetails.fromSnapshot(snapshots[index]));
+        return FlightCard(
+            flightDetails: FlightDetails.fromSnapshot(snapshots[index]));
       });
 }
 
@@ -112,11 +140,11 @@ class FlightDetails {
         newPrice = map['newPrice'],
         rating = map['rating'];
 
-  FlightDetails.fromSnapshot(DocumentSnapshot snapshot) : this.fromMap(snapshot.data);
+  FlightDetails.fromSnapshot(DocumentSnapshot snapshot)
+      : this.fromMap(snapshot.data);
 }
 
 class FlightCard extends StatelessWidget {
-
   final FlightDetails flightDetails;
 
   FlightCard({this.flightDetails});
@@ -166,8 +194,10 @@ class FlightCard extends StatelessWidget {
                     spacing: 8.0,
                     runSpacing: -8.0,
                     children: <Widget>[
-                      FlightDetailChip(Icons.calendar_today, '${flightDetails.date}'),
-                      FlightDetailChip(Icons.flight_takeoff, '${flightDetails.airlines}'),
+                      FlightDetailChip(
+                          Icons.calendar_today, '${flightDetails.date}'),
+                      FlightDetailChip(
+                          Icons.flight_takeoff, '${flightDetails.airlines}'),
                       FlightDetailChip(Icons.star, '${flightDetails.rating}'),
                     ],
                   )
@@ -229,6 +259,7 @@ class FlightDetailChip extends StatelessWidget {
 class FlightListTopPart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    AppBloc appBloc = BlocProvider.of<AppBloc>(context);
     return Stack(
       children: <Widget>[
         ClipPath(
@@ -262,7 +293,7 @@ class FlightListTopPart extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(
-                            '${InheritedFlightListing.of(context).fromLocation}',
+                            '${appBloc.fromLocation}',
                             style: TextStyle(fontSize: 16.0),
                           ),
                           Divider(
@@ -270,7 +301,7 @@ class FlightListTopPart extends StatelessWidget {
                             height: 20.0,
                           ),
                           Text(
-                            '${InheritedFlightListing.of(context).toLocation}',
+                            '${appBloc.toLocation}',
                             style: TextStyle(
                                 fontSize: 16.0, fontWeight: FontWeight.bold),
                           ),
