@@ -20,4 +20,7 @@ integration to back the app with dynamic content.
 
 **Part 5-** https://youtu.be/WBcoWif202s Using Bloc pattern through out the app for state management.
 
+## Screenshots
+<table style={border:"none"}><tr><td><img src="https://github.com/TechieBlossom/flightapp/blob/master/screenshots/home_screen_1.png" alt="Home Screen(default)"/></td><td><img src="https://github.com/TechieBlossom/flightapp/blob/master/screenshots/home_screen_2.png" alt="Home Screen(Location Popup)"/></td><td><img src="https://github.com/TechieBlossom/flightapp/blob/master/screenshots/flight_list_screen.png" alt="Flight Listing Screen"/></td></tr></table>
+
 This project is now complete on 2nd January 2019.
