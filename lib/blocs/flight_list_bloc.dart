@@ -1,18 +1,17 @@
 import 'dart:async';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flighttickets/api/services.dart';
 import 'package:flighttickets/blocs/bloc_provider.dart';
+import 'package:flighttickets/flight_list.dart';
 
 class FlightListBloc implements BlocBase {
 
-  StreamController<QuerySnapshot> dealsController = StreamController<QuerySnapshot>();
+  StreamController<List<FlightDetails>> dealsController = StreamController<List<FlightDetails>>();
 
-  StreamSink<QuerySnapshot> get dealsSink => dealsController.sink;
+  StreamSink<List<FlightDetails>> get dealsSink => dealsController.sink;
 
-  Stream<QuerySnapshot> get dealsStream => dealsController.stream;
+  Stream<List<FlightDetails>> get dealsStream => dealsController.stream;
 
-  FlightListBloc(FirebaseService firebaseService) {
+  FlightListBloc(Service firebaseService) {
     firebaseService.getDeals().listen((event) {
       dealsSink.add(event);
     });

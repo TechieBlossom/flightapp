@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flighttickets/api/services.dart';
 import 'package:flighttickets/blocs/bloc_provider.dart';
 import 'package:flighttickets/main.dart';
@@ -8,7 +7,7 @@ import 'package:rxdart/rxdart.dart';
 
 class AppBloc implements BlocBase {
 
-  FirebaseService firebaseService;
+  Service service;
 
   String fromLocation, toLocation;
   List<String> locations = List();
@@ -16,8 +15,7 @@ class AppBloc implements BlocBase {
   StreamController<String> fromLocationController = PublishSubject<String>();
   StreamController<String> toLocationController = PublishSubject<String>();
   StreamController<List<String>> locationsController = StreamController<List<String>>();
-  StreamController<QuerySnapshot> citiesSnapshotController = StreamController<QuerySnapshot>();
-  StreamController<int> citiesCounterController = StreamController<int>();
+  StreamController<List<City>> citiesSnapshotController = StreamController<List<City>>();
 
   StreamSink<String> get addFromLocation => fromLocationController.sink;
   Stream<String> get fromLocationStream => fromLocationController.stream;
@@ -28,14 +26,12 @@ class AppBloc implements BlocBase {
   StreamSink<String> get addToLocation => toLocationController.sink;
   Stream<String> get toLocationStream => toLocationController.stream;
 
-  StreamSink<QuerySnapshot> get citiesSnapshot => citiesSnapshotController.sink;
-  Stream<QuerySnapshot> get citiesSnapshotStream => citiesSnapshotController.stream;
-
-  StreamSink<int> get citiesCounter => citiesCounterController.sink;
-  Stream<int> get citiesCounterStream => citiesCounterController.stream;
+  StreamSink<List<City>> get citiesSnapshot => citiesSnapshotController.sink;
+  Stream<List<City>> get citiesSnapshotStream => citiesSnapshotController.stream;
 
   AppBloc() {
-    firebaseService = FirebaseService();
+    addLocations();
+    service = Service();
     fromLocationStream.listen((location) {
       fromLocation = location;
     });
@@ -44,24 +40,18 @@ class AppBloc implements BlocBase {
       toLocation = location;
     });
 
-    firebaseService.getCities().listen((event) {
+    service.getCities().listen((event) {
       citiesSnapshot.add(event);
-      citiesCounter.add(event.documents.length);
-    });
-
-    firebaseService.getLocations().listen((event) {
-      print('location updated from firestore');
-      addLocations(event.documents);
     });
   }
 
-  addLocations(List<DocumentSnapshot> snapshots) {
+  addLocations() {
     locations?.clear();
-    for (int i = 0; i < snapshots.length; i++) {
-      final Location location = Location.fromSnapshot(snapshots[i]);
-      print('location ${location.name}');
-      locations.add(location.name);
-    }
+    locations.add("Boston (BOS)");
+    locations.add("California (CAF)");
+    locations.add("Las Vegas (LAV)");
+    locations.add("New York City (JFK)");
+
     addLocationsList.add(locations);
     addFromLocation.add(locations[0]);
   }
@@ -73,6 +63,5 @@ class AppBloc implements BlocBase {
     toLocationController.close();
     locationsController.close();
     citiesSnapshotController.close();
-    citiesCounterController.close();
   }
 }

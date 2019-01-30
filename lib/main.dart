@@ -1,5 +1,4 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flighttickets/CustomAppBottomBar.dart';
 import 'package:flighttickets/CustomShapeClipper.dart';
 import 'package:flighttickets/blocs/app_bloc.dart';
@@ -336,7 +335,6 @@ class _ChoiceChipState extends State<ChoiceChip> {
 var viewAllStyle = TextStyle(fontSize: 14.0, color: appTheme.primaryColor);
 
 class HomeScreenBottomPart extends StatefulWidget {
-
   @override
   HomeScreenBottomPartState createState() {
     return new HomeScreenBottomPartState();
@@ -344,7 +342,6 @@ class HomeScreenBottomPart extends StatefulWidget {
 }
 
 class HomeScreenBottomPartState extends State<HomeScreenBottomPart> {
-
   AppBloc appBloc;
 
   @override
@@ -368,14 +365,9 @@ class HomeScreenBottomPartState extends State<HomeScreenBottomPart> {
                 style: dropDownMenuItemStyle,
               ),
               Spacer(),
-              StreamBuilder(
-                stream: appBloc.citiesCounterStream,
-                builder: (context, snapshot) {
-                  return Text(
-                    "VIEW ALL(${snapshot.data})",
-                    style: viewAllStyle,
-                  );
-                },
+              Text(
+                "VIEW ALL(3)",
+                style: viewAllStyle,
               ),
             ],
           ),
@@ -387,7 +379,7 @@ class HomeScreenBottomPartState extends State<HomeScreenBottomPart> {
               builder: (context, snapshot) {
                 return !snapshot.hasData
                     ? Center(child: CircularProgressIndicator())
-                    : _buildCitiesList(context, snapshot.data.documents);
+                    : _buildCitiesList(context, snapshot.data);
               }),
         ),
       ],
@@ -395,44 +387,32 @@ class HomeScreenBottomPartState extends State<HomeScreenBottomPart> {
   }
 }
 
-Widget _buildCitiesList(
-    BuildContext context, List<DocumentSnapshot> snapshots) {
+Widget _buildCitiesList(BuildContext context, List<City> snapshots) {
   return ListView.builder(
       itemCount: snapshots.length,
       scrollDirection: Axis.horizontal,
       itemBuilder: (context, index) {
-        return CityCard(city: City.fromSnapshot(snapshots[index]));
+        return CityCard(city: snapshots[index]);
       });
 }
 
 class Location {
   final String name;
 
-  Location.fromMap(Map<String, dynamic> map)
-      : assert(map['name'] != null),
-        name = map['name'];
-
-  Location.fromSnapshot(DocumentSnapshot snapshot)
-      : this.fromMap(snapshot.data);
+  Location({this.name});
 }
 
 class City {
   final String imagePath, cityName, monthYear, discount;
   final int oldPrice, newPrice;
 
-  City.fromMap(Map<String, dynamic> map)
-      : assert(map['cityName'] != null),
-        assert(map['monthYear'] != null),
-        assert(map['discount'] != null),
-        assert(map['imagePath'] != null),
-        imagePath = map['imagePath'],
-        cityName = map['cityName'],
-        monthYear = map['monthYear'],
-        discount = map['discount'],
-        oldPrice = map['oldPrice'],
-        newPrice = map['newPrice'];
-
-  City.fromSnapshot(DocumentSnapshot snapshot) : this.fromMap(snapshot.data);
+  City(
+      {this.imagePath,
+      this.cityName,
+      this.monthYear,
+      this.discount,
+      this.oldPrice,
+      this.newPrice});
 }
 
 final formatCurrency = NumberFormat.simpleCurrency();

@@ -1,41 +1,82 @@
-import 'dart:io';
+import 'package:flighttickets/flight_list.dart';
+import 'package:flighttickets/main.dart';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
+class Service {
+  Stream<List<City>> getCities() async* {
+    List<City> cities = List();
+    City athensCity = City(
+        imagePath:
+            'https://firebasestorage.googleapis.com/v0/b/flight-app-mock.appspot.com/o/athens.jpg?alt=media&token=76d68802-c63f-49ce-bbda-a5511defd490',
+        cityName: 'Athens',
+        discount: "60",
+        monthYear: "Apr 2019",
+        newPrice: 2000,
+        oldPrice: 9999);
 
-class FirebaseService {
-  FirebaseService() {
-    initFirebase();
+    cities.add(athensCity);
+
+    City lasVegasCity = City(
+        imagePath:
+            'https://firebasestorage.googleapis.com/v0/b/flight-app-mock.appspot.com/o/lasvegas.jpg?alt=media&token=811b3f98-875d-40e7-b592-e80422a8fce3',
+        cityName: 'Las Vegas',
+        discount: "45",
+        monthYear: "Feb 2019",
+        newPrice: 2500,
+        oldPrice: 4299);
+
+    cities.add(lasVegasCity);
+
+    City sydneyCity = City(
+        imagePath:
+            'https://firebasestorage.googleapis.com/v0/b/flight-app-mock.appspot.com/o/sydney.jpeg?alt=media&token=2bc37c7b-230a-476b-9ee6-b8d49bc8e710',
+        cityName: 'Sydney',
+        discount: "35",
+        monthYear: "Dec 2019",
+        newPrice: 2399,
+        oldPrice: 5999);
+
+    cities.add(sydneyCity);
+    yield cities;
   }
 
-  initFirebase() async {
-    final FirebaseApp app = await FirebaseApp.configure(
-        name: 'flight-firestore',
-        options: Platform.isIOS
-            ? const FirebaseOptions(
-                googleAppID: '1:1009830851809:ios:8658d2b8af672428',
-                gcmSenderID: '1009830851809',
-                databaseURL: 'https://flight-app-mock.firebaseio.com/',
-              )
-            : const FirebaseOptions(
-                googleAppID: '1:1009830851809:android:8658d2b8af672428',
-                apiKey: 'AIzaSyD40ZrOJQh-hTva6dQ-ddYo95fXq5LOb3E',
-                databaseURL: 'https://flight-app-mock.firebaseio.com/',
-              ));
-  }
+  Stream<List<FlightDetails>> getDeals() async* {
+    List<FlightDetails> deals = List();
+    FlightDetails american = FlightDetails(
+        airlines: "American",
+        date: "Feb 2019",
+        discount: "15",
+        newPrice: 5199,
+        oldPrice: 6999,
+        rating: "4.3");
+    deals.add(american);
 
-  Stream<QuerySnapshot> getLocations() {
-    return Firestore.instance.collection('locations').snapshots();
-  }
+    FlightDetails british = FlightDetails(
+        airlines: "British Airlines",
+        date: "Jan 2019",
+        discount: "20",
+        newPrice: 7099,
+        oldPrice: 8999,
+        rating: "4.8");
+    deals.add(british);
 
-  Stream<QuerySnapshot> getCities() {
-    return Firestore.instance
-        .collection('cities')
-        .orderBy('newPrice')
-        .snapshots();
-  }
+    FlightDetails cathayPacific = FlightDetails(
+        airlines: "Cathay Pacific",
+        date: "June 2019",
+        discount: "55",
+        newPrice: 4159,
+        oldPrice: 9999,
+        rating: "4.6");
+    deals.add(cathayPacific);
 
-  Stream<QuerySnapshot> getDeals() {
-    return Firestore.instance.collection('deals').snapshots();
+    FlightDetails jetAirways = FlightDetails(
+        airlines: "Jet Airways",
+        date: "Jan 2019",
+        discount: "20",
+        newPrice: 6599,
+        oldPrice: 7999,
+        rating: "4.4");
+    deals.add(jetAirways);
+
+    yield deals;
   }
 }

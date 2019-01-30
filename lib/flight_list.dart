@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flighttickets/CustomShapeClipper.dart';
 import 'package:flighttickets/blocs/app_bloc.dart';
 import 'package:flighttickets/blocs/bloc_provider.dart';
@@ -11,7 +10,6 @@ final Color flightBorderColor = Color(0xFFE6E6E6);
 final Color chipBackgroundColor = Color(0xFFF6F6F6);
 
 class InheritedFlightListing extends InheritedWidget {
-
   InheritedFlightListing({Widget child}) : super(child: child);
 
   @override
@@ -25,7 +23,7 @@ class FlightListingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      bloc: FlightListBloc(BlocProvider.of<AppBloc>(context).firebaseService),
+      bloc: FlightListBloc(BlocProvider.of<AppBloc>(context).service),
       child: Scaffold(
         appBar: AppBar(
           title: Text(
@@ -58,7 +56,6 @@ class FlightListingScreen extends StatelessWidget {
 }
 
 class FlightListingBottomPart extends StatefulWidget {
-
   @override
   FlightListingBottomPartState createState() {
     return new FlightListingBottomPartState();
@@ -66,7 +63,6 @@ class FlightListingBottomPart extends StatefulWidget {
 }
 
 class FlightListingBottomPartState extends State<FlightListingBottomPart> {
-
   FlightListBloc flightListBloc;
 
   @override
@@ -103,7 +99,7 @@ class FlightListingBottomPartState extends State<FlightListingBottomPart> {
             builder: (context, snapshot) {
               return !snapshot.hasData
                   ? Center(child: CircularProgressIndicator())
-                  : _buildDealsList(context, snapshot.data.documents);
+                  : _buildDealsList(context, snapshot.data);
             },
           ),
         ],
@@ -112,15 +108,14 @@ class FlightListingBottomPartState extends State<FlightListingBottomPart> {
   }
 }
 
-Widget _buildDealsList(BuildContext context, List<DocumentSnapshot> snapshots) {
+Widget _buildDealsList(BuildContext context, List<FlightDetails> snapshots) {
   return ListView.builder(
       shrinkWrap: true,
       itemCount: snapshots.length,
       physics: ClampingScrollPhysics(),
       scrollDirection: Axis.vertical,
       itemBuilder: (context, index) {
-        return FlightCard(
-            flightDetails: FlightDetails.fromSnapshot(snapshots[index]));
+        return FlightCard(flightDetails: snapshots[index]);
       });
 }
 
@@ -128,20 +123,13 @@ class FlightDetails {
   final String airlines, date, discount, rating;
   final int oldPrice, newPrice;
 
-  FlightDetails.fromMap(Map<String, dynamic> map)
-      : assert(map['airlines'] != null),
-        assert(map['date'] != null),
-        assert(map['discount'] != null),
-        assert(map['rating'] != null),
-        airlines = map['airlines'],
-        date = map['date'],
-        discount = map['discount'],
-        oldPrice = map['oldPrice'],
-        newPrice = map['newPrice'],
-        rating = map['rating'];
-
-  FlightDetails.fromSnapshot(DocumentSnapshot snapshot)
-      : this.fromMap(snapshot.data);
+  FlightDetails(
+      {this.airlines,
+      this.date,
+      this.discount,
+      this.rating,
+      this.oldPrice,
+      this.newPrice});
 }
 
 class FlightCard extends StatelessWidget {
