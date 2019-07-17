@@ -464,7 +464,7 @@ class CityCard extends StatelessWidget {
                     fit: BoxFit.cover,
                     fadeInDuration: Duration(milliseconds: 500),
                     fadeInCurve: Curves.easeIn,
-                    placeholder: Center(child: CircularProgressIndicator()),
+                    placeholder: (context, progressText) => Center(child: CircularProgressIndicator()),
                   ),
                 ),
                 Positioned(
