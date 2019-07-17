@@ -15,7 +15,7 @@ As we progressed through with both the screens, viewers asked for Firebase integ
 
 **Part 3-** https://youtu.be/4bIjr6zXm1E Created Flight Listing screen and navigated back and forth between two screens
 
-**Part 4-** https://youtu.be/4bIjr6zXm1E Used Inherited Widget to remove redundant passing of parameters, Added firestore 
+**Part 4-** https://youtu.be/Ogz7w1JW2ZI Used Inherited Widget to remove redundant passing of parameters, Added firestore 
 integration to back the app with dynamic content.
 
 **Part 5-** https://youtu.be/WBcoWif202s Using Bloc pattern through out the app for state management.
